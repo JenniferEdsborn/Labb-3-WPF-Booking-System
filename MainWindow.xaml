@@ -1,0 +1,102 @@
+﻿<Window x:Class="Labb_3___WPF_Booking_System.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Labb_3___WPF_Booking_System"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="Restaurant Booking System" Height="580" Width="800"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+
+    <!-- TAB FOR BOOKING SYSTEM -->
+    <TabControl>
+        <TabItem Header="Bokningssystem">
+            <Grid x:Name = "BookingLayoutGrid" Background = "White" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height = "*" />
+                    <RowDefinition Height = "*" />
+                </Grid.RowDefinitions>
+                <Border Name="HeadBorder_Gray" Background="LightGray" Grid.Row="0" Grid.ColumnSpan="2" Visibility="Visible"></Border>
+                <Border Name="HeadBorder_Blue" Background="LightBlue" Grid.Row="0" Grid.ColumnSpan="2" Visibility="Hidden"></Border>
+                <Border Name="HeadBorder_Pink" Background="LightPink" Grid.Row="0" Grid.ColumnSpan="2" Visibility="Hidden"></Border>
+
+                <Label Name="LabelRestaurantName" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="36" FontWeight="Bold" FontFamily="Sitka Small"/>
+
+                <Calendar Name="BookingCalendar" IsTodayHighlighted="False" SelectedDate="{x:Static sys:DateTime.Now}" SelectionMode="SingleDate" DisplayDateStart="{x:Static sys:DateTime.Now}" HorizontalAlignment="Left" Margin="10,20,0,0" Grid.Row="1" VerticalAlignment="Top" Height="168" Width="198"/>
+
+                <Label Content="Kundens namn:" HorizontalAlignment="Left" Margin="221,10,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+                <Label Content="Allergier:" HorizontalAlignment="Left" Margin="221,53,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+                <Label Content="Bord:" HorizontalAlignment="Left" Margin="221,96,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+
+                <TextBox Name="TextBox_CustomerName"  HorizontalAlignment="Left" Margin="225,35,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="175" Height="22" FontSize="14" Foreground="Black"/>
+                <TextBox Name="TextBox_CustomerAllergies"  HorizontalAlignment="Left" Margin="225,78,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="175" Height="22" FontSize="14" Foreground="Black"/>
+
+                <Button Name="ButtonBookTable" Content="Boka" HorizontalAlignment="Left" Margin="225,198,0,0" Grid.Row="1" VerticalAlignment="Top" Height="22" Width="175" Click="Button_BookTable"/>
+                <Button Name="ButtonSaveBookList" Content="Spara som..." HorizontalAlignment="Left" Margin="602,20,0,0" Grid.Row="1" VerticalAlignment="Top" Height="27" Width="170" Click="SaveBookingList"/>
+                <Button Content="Avboka" HorizontalAlignment="Left" Margin="685,200,0,0" Grid.Row="1" VerticalAlignment="Top" Width="87" Click="CancelBooking"/>
+                <Button x:Name="ButtonQuit" Content="Avsluta" HorizontalAlignment="Left" Margin="602,85,0,0" Grid.Row="1" VerticalAlignment="Top" Height="29" Width="170" Click="QuitApplication"/>
+                <Button x:Name="ButtonReadFile" Content="Ladda in..." HorizontalAlignment="Left" Margin="602,53,0,0" Grid.Row="1" VerticalAlignment="Top" Height="27" Width="170" Click="ReadBookingList"/>
+
+                <ComboBox Name="ComboBox_BookTable" HorizontalAlignment="Left" Margin="225,122,0,0" Grid.Row="1" VerticalAlignment="Top" Width="175"/>
+                <ComboBox Name="ComboBox_BookTime" HorizontalAlignment="Left" Margin="22,198,0,0" Grid.Row="1" VerticalAlignment="Top" Width="177"/>
+
+                <DataGrid Name="Grid_CustomerBookings" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Datum" Width="70"  Binding="{Binding customerDate}"/>
+                        <DataGridTextColumn Header="Tid" Width="50" Binding="{Binding customerTime}" />
+                        <DataGridTextColumn Header="Namn" Width="*" Binding="{Binding customerName}" />
+                        <DataGridTextColumn Header="Bordsnr." Width="70" Binding="{Binding customerTable}" />
+                        <DataGridTextColumn Header="Allergier" Width="*" Binding="{Binding customerAllergies}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+
+            <!-- TAB FOR SETTINGS -->
+        </TabItem>
+        <TabItem Header="Inställningar">
+            <Grid x:Name = "SettingsLayoutGrid" Background = "White" >
+                <Grid.ColumnDefinitions>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height = "*" />
+                    <RowDefinition Height = "240" />
+                    <RowDefinition Height = "50" />
+                </Grid.RowDefinitions>
+                <Border Name="SettingsHeadBorder_Gray" Background="LightGray" Grid.Row="0" Visibility="Visible"></Border>
+                <Border Name="SettingsHeadBorder_Blue" Background="LightBlue" Grid.Row="0" Visibility="Hidden"></Border>
+                <Border Name="SettingsHeadBorder_Pink" Background="LightPink" Grid.Row="0" Visibility="Hidden"></Border>
+                <Border Name="SettingsFootBorder_Gray" Background="LightGray" Grid.Row="3" Visibility="Visible"></Border>
+                <Border Name="SettingsFootBorder_Blue" Background="LightBlue" Grid.Row="3" Visibility="Hidden"></Border>
+                <Border Name="SettingsFootBorder_Pink" Background="LightPink" Grid.Row="3" Visibility="Hidden"></Border>
+
+                <Label Name="LabelSettings" Content="Inställningar" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="36" FontWeight="Bold" FontFamily="Sitka Small"/>
+                <Label Content="Namn och tema" HorizontalAlignment="Left" Margin="37,10,0,0" Grid.Row="1" VerticalAlignment="Top" FontSize="18" FontWeight="Bold"/>
+                <TextBox Name="TextBox_SetRestaurantName" HorizontalAlignment="Left" Margin="37,45,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="281" Height="23"/>
+                <RadioButton Name="GreyTheme" Content="Grått tema" HorizontalAlignment="Left" Margin="37,79,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+                <RadioButton Name="PinkTheme" Content="Rosa tema" HorizontalAlignment="Left" Margin="138,79,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+                <RadioButton Name="BlueTheme" Content="Blått tema" HorizontalAlignment="Left" Margin="227,79,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+                <Button x:Name="ButtonSaveNameThemeSettings" Content="Spara ändringar" Grid.Row="1" HorizontalAlignment="Left" Margin="37,103,0,0" VerticalAlignment="Top" Height="27" Width="281" Click="SaveNameThemeSettings"/>
+
+                <Button Name="ButtonCLearList" Content="Rensa kundbokningar" HorizontalAlignment="Left" Margin="599,19,0,0" Grid.Row="1" VerticalAlignment="Top" Height="29" Width="170" Click="Settings_ClearList"/>
+                <Button Name="ButtonQuit_Copy" Content="Avsluta" HorizontalAlignment="Left" Margin="599,53,0,0" Grid.Row="1" VerticalAlignment="Top" Height="29" Width="170" Click="QuitApplication"/>
+
+                <Label Content="Övriga inställningar" HorizontalAlignment="Left" Margin="35,10,0,0" Grid.Row="2" VerticalAlignment="Top" FontSize="18" FontWeight="Bold"/>
+                <Label Content="Antal bord" HorizontalAlignment="Left" Margin="282,49,0,0" Grid.Row="2" VerticalAlignment="Top"/>
+                <Label Content="Restaurangens öppningstid" HorizontalAlignment="Left" Margin="30,49,0,0" Grid.Row="2" VerticalAlignment="Top"/>
+                <Label Content="Restaurangens stängningstid" HorizontalAlignment="Left" Margin="30,0,0,0" Grid.Row="2" VerticalAlignment="Center"/>
+                <ComboBox Name="ComboBox_OpenTime" HorizontalAlignment="Left" Margin="35,75,0,0" Grid.Row="2" VerticalAlignment="Top" Width="159"/>
+                <ComboBox Name="ComboBox_TableAmount" HorizontalAlignment="Left" Margin="282,75,0,0" Grid.Row="2" VerticalAlignment="Top" Width="159"/>
+                <ComboBox Name="ComboBox_CloseTime" HorizontalAlignment="Left" Margin="35,133,0,0" Grid.Row="2" VerticalAlignment="Top" Width="160"/>
+                <Button Name="ButtonSaveSettings" Content="Spara ändringar" HorizontalAlignment="Left" Margin="35,177,0,0" Grid.Row="2" VerticalAlignment="Top" Height="27" Width="281" Click="SaveSettings"/>
+
+
+            </Grid>
+        </TabItem>
+    </TabControl>
+
+
+</Window>
