@@ -270,8 +270,7 @@ namespace Labb_3___WPF_Booking_System
                             templist.RemoveAt(templist.Count-1); // Removes the last item which is always null (new-line)
 
                             foreach (string booking in templist) // Works through every fifth item and adds them into the booking-list
-                            {
-                                
+                            {                                
                                 string[] t = booking.Split(' ');
 
                                 if (t[3] == "NoLastName")
