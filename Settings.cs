@@ -66,11 +66,6 @@ namespace Labb_3___WPF_Booking_System
                     newTableAmount.Add(i);
                 }
 
-                ComboBox_BookTable.ItemsSource = newTableAmount;
-                ComboBox_BookTime.ItemsSource = newTimes;
-
-                customSettings = true;
-
                 ResetDefaultValues();
             }
             else
@@ -121,17 +116,6 @@ namespace Labb_3___WPF_Booking_System
             }
 
             System.Windows.MessageBox.Show("Dina ändringar är genomförda.", "Information", MessageBoxButton.OK);
-        }
-        private void Settings_ClearList(object sender, RoutedEventArgs e)
-        {
-            if (System.Windows.MessageBox.Show("Alla bokningar kommer att rensans. Fortsätta?", "Varning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-            {
-                bookings.Clear();
-            }
-            else
-            {
-                return;
-            }
-        }
+        }       
     }
 }

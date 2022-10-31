@@ -17,22 +17,20 @@ using System.IO;
 using System.Collections.ObjectModel;
 using Microsoft.Win32;
 using System.Windows.Forms;
-
-//async? <- kanske en text som skriver "Ny bokning lades in" som sedan försvinner med await?
-//text försvinner när man klickar i rutan (Kundnamn, Allergier)
-//writealltext till en debugg.txt
+using System.Runtime.CompilerServices;
 
 /*
 * ------ PARTIAL CLASS FÖR TIDSBOKNING ------
 * Innehåll:
-* - Listor för nya tider och bordsantal
+* - Listor för tider och bordsantal
 * - Iterering
 * - Selektion
 * - Felhantering
 * - Filhantering
-* - LINQ
-* - Meddelande vid dubbelbokningar
-* - Endast ett visst antal bord tillåts bokas
+* - LINQ (kodrad 197)
+* - Asynkron metod (kodrad 81)
+* - Felmeddelande vid dubbelbokningar
+* - Endast ett visst antal bord per datum tillåts bokas
 * ---------------------------------------------
 */
 
@@ -59,8 +57,6 @@ namespace Labb_3___WPF_Booking_System
         string customerTime = "";
         int customerTable = 0;
 
-        bool customSettings = false;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -73,14 +69,18 @@ namespace Labb_3___WPF_Booking_System
             this.ComboBox_BookTable.SelectedIndex = 0;
             this.ComboBox_BookTime.SelectedIndex = 0;
 
+            //Settings default values
             this.ComboBox_OpenTime.ItemsSource = restaurantOpens;
             this.ComboBox_CloseTime.ItemsSource = restaurantCloses;
             this.ComboBox_TableAmount.ItemsSource = amountOfTables;
 
             LabelRestaurantName.Content = "Restaurant Booking System";
-
             GreyTheme.IsChecked = true;
 
+        }
+        public static async Task WriteToBugFile(string bugmessage)
+        {
+            await File.AppendAllTextAsync("bugmessages.txt", bugmessage + "\n");
         }
         private void ErrorMessage(string message)
         {
@@ -88,16 +88,23 @@ namespace Labb_3___WPF_Booking_System
         }       
         private void Button_BookTable(object sender, RoutedEventArgs e)
         {           
-            customerName = TextBox_CustomerName.Text;
-            customerAllergies = TextBox_CustomerAllergies.Text;            
+            customerName = TextBox_CustomerName.Text.Trim();
+            customerAllergies = TextBox_CustomerAllergies.Text.Trim();            
             customerTime = ComboBox_BookTime.Text;
             customerTable = ComboBox_BookTable.SelectedIndex + 1;
             customerDate = ConvertCustomerDate();
-           
-            if (CheckValidInput(customerName, customerDate, customerTable, customerTime))
+            try
             {
-                bookings.Add(new Customer(customerName, customerAllergies, customerDate, customerTime, customerTable));
-                ResetDefaultValues();
+                if (CheckValidInput(customerName, customerDate, customerTable, customerTime))
+                {
+                    bookings.Add(new Customer(customerName, customerAllergies, customerDate, customerTime, customerTable));
+                    ResetDefaultValues();
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage(ex.Message);
+                _ = WriteToBugFile("Button_BookTable Method: " + ex.Message);
             }
         }
         private string ConvertCustomerDate()
@@ -115,12 +122,13 @@ namespace Labb_3___WPF_Booking_System
                 catch (ArgumentOutOfRangeException ex)
                 {
                     ErrorMessage(ex.Message);
-                    File.WriteAllText("BookingSystemErrors.txt", ex.Message);
+                    _ = WriteToBugFile("ConvertCustomerDate Method: " + ex.Message);
+
                 }
                 catch (InvalidOperationException ex)
                 {
                     ErrorMessage(ex.Message);
-                    File.WriteAllText("BookingSystemErrors.txt", ex.Message);
+                    _ = WriteToBugFile("ConvertCustomerDate Method: " + ex.Message);
                 }
             }
 
@@ -186,7 +194,7 @@ namespace Labb_3___WPF_Booking_System
             {
                 try
                 {
-                    List<Customer> printList = new List<Customer>(bookings.OrderBy(o => o.customerDate).ToList());
+                    List<Customer> printList = new List<Customer>(bookings.OrderBy(o => o.customerDate).ToList()); //LINQ
 
                     System.Windows.Forms.SaveFileDialog dlg = new System.Windows.Forms.SaveFileDialog();
 
@@ -226,9 +234,10 @@ namespace Labb_3___WPF_Booking_System
                         }
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
                     ErrorMessage("Någonting gick fel. Försök igen.");
+                    _ = WriteToBugFile("SaveBookingList Method: " + ex.Message);
                 }
             }
             else
@@ -253,21 +262,21 @@ namespace Labb_3___WPF_Booking_System
                         {
                             tempbookings = sr.ReadToEnd().Split("\r\n");
 
-                            foreach (string booking in tempbookings)
+                            foreach (string booking in tempbookings) // Adds all strings into a temporary list
                             {
                                 templist.Add(booking);
                             }
 
-                            templist.RemoveAt(templist.Count-1);
+                            templist.RemoveAt(templist.Count-1); // Removes the last item which is always null (new-line)
 
-                            foreach (string booking in templist)
+                            foreach (string booking in templist) // Works through every fifth item and adds them into the booking-list
                             {
                                 
                                 string[] t = booking.Split(' ');
 
                                 if (t[3] == "NoLastName")
                                 {
-                                    t[3] = " ";
+                                    t[3] = "";
                                 }
 
                                 if (t[5] == "-")
@@ -276,15 +285,16 @@ namespace Labb_3___WPF_Booking_System
                                 }
 
                                 string i = " ";
-                                bookings.Add(new Customer(t[2] + i + t[3].Trim(), t[5], t[0], t[1],int.Parse(t[4])));
+                                bookings.Add(new Customer(t[2] + i + t[3].Trim(), t[5].Trim(), t[0], t[1],int.Parse(t[4])));
                             }
                         }
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 ErrorMessage("Någonting gick fel vid inläsning.");
+                _ = WriteToBugFile("ReadBookingList Method: " + ex.Message);
             }
         }
         private void ResetDefaultValues()
@@ -293,19 +303,21 @@ namespace Labb_3___WPF_Booking_System
             ComboBox_BookTable.SelectedIndex = 0;
             TextBox_CustomerName.Clear();
             TextBox_CustomerAllergies.Clear();
-
-            if (customSettings == true)
+        }
+        private void Settings_ClearList(object sender, RoutedEventArgs e)
+        {
+            if (bookings.Count > 0)
             {
-
+                if (System.Windows.MessageBox.Show("Alla bokningar kommer att rensans. Fortsätta?", "Varning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                    bookings.Clear();
+                }
+                else
+                {
+                    return;
+                }
             }
-            else
-            {
-                ComboBox_CloseTime.SelectedIndex = 0;
-                ComboBox_OpenTime.SelectedIndex = 0;
-                ComboBox_TableAmount.SelectedIndex = 0;
-            }
-
-        }       
+        }
         private void QuitApplication(object sender, RoutedEventArgs e)
         {
             if (System.Windows.MessageBox.Show("Är du säker på att du vill avsluta?", "Avsluta", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)

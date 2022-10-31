@@ -37,13 +37,14 @@
                 <Button Name="ButtonBookTable" Content="Boka" HorizontalAlignment="Left" Margin="225,198,0,0" Grid.Row="1" VerticalAlignment="Top" Height="22" Width="175" Click="Button_BookTable"/>
                 <Button Name="ButtonSaveBookList" Content="Spara som..." HorizontalAlignment="Left" Margin="602,20,0,0" Grid.Row="1" VerticalAlignment="Top" Height="27" Width="170" Click="SaveBookingList"/>
                 <Button Content="Avboka" HorizontalAlignment="Left" Margin="685,200,0,0" Grid.Row="1" VerticalAlignment="Top" Width="87" Click="CancelBooking"/>
-                <Button x:Name="ButtonQuit" Content="Avsluta" HorizontalAlignment="Left" Margin="602,85,0,0" Grid.Row="1" VerticalAlignment="Top" Height="29" Width="170" Click="QuitApplication"/>
+                <Button x:Name="ButtonQuit" Content="Avsluta" HorizontalAlignment="Left" Margin="602,119,0,0" Grid.Row="1" VerticalAlignment="Top" Height="30" Width="170" Click="QuitApplication"/>
                 <Button x:Name="ButtonReadFile" Content="Ladda in..." HorizontalAlignment="Left" Margin="602,53,0,0" Grid.Row="1" VerticalAlignment="Top" Height="27" Width="170" Click="ReadBookingList"/>
+                <Button x:Name="ButtonClearList" Content="Rensa kundbokningar" HorizontalAlignment="Left" Margin="602,85,0,0" Grid.Row="1" VerticalAlignment="Top" Height="29" Width="170" Click="Settings_ClearList"/>
 
                 <ComboBox Name="ComboBox_BookTable" HorizontalAlignment="Left" Margin="225,122,0,0" Grid.Row="1" VerticalAlignment="Top" Width="175"/>
                 <ComboBox Name="ComboBox_BookTime" HorizontalAlignment="Left" Margin="22,198,0,0" Grid.Row="1" VerticalAlignment="Top" Width="177"/>
 
-                <DataGrid Name="Grid_CustomerBookings" Grid.Row="2" AutoGenerateColumns="False" IsReadOnly="True">
+                <DataGrid Name="Grid_CustomerBookings" Grid.Row="2" AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Datum" Width="70"  Binding="{Binding customerDate}"/>
                         <DataGridTextColumn Header="Tid" Width="50" Binding="{Binding customerTime}" />
@@ -52,6 +53,7 @@
                         <DataGridTextColumn Header="Allergier" Width="*" Binding="{Binding customerAllergies}" />
                     </DataGrid.Columns>
                 </DataGrid>
+
             </Grid>
 
             <!-- TAB FOR SETTINGS -->
@@ -80,9 +82,7 @@
                 <RadioButton Name="PinkTheme" Content="Rosa tema" HorizontalAlignment="Left" Margin="138,79,0,0" Grid.Row="1" VerticalAlignment="Top"/>
                 <RadioButton Name="BlueTheme" Content="Blått tema" HorizontalAlignment="Left" Margin="227,79,0,0" Grid.Row="1" VerticalAlignment="Top"/>
                 <Button x:Name="ButtonSaveNameThemeSettings" Content="Spara ändringar" Grid.Row="1" HorizontalAlignment="Left" Margin="37,103,0,0" VerticalAlignment="Top" Height="27" Width="281" Click="SaveNameThemeSettings"/>
-
-                <Button Name="ButtonCLearList" Content="Rensa kundbokningar" HorizontalAlignment="Left" Margin="599,19,0,0" Grid.Row="1" VerticalAlignment="Top" Height="29" Width="170" Click="Settings_ClearList"/>
-                <Button Name="ButtonQuit_Copy" Content="Avsluta" HorizontalAlignment="Left" Margin="599,53,0,0" Grid.Row="1" VerticalAlignment="Top" Height="29" Width="170" Click="QuitApplication"/>
+                <Button Name="ButtonQuit_Copy" Content="Avsluta" HorizontalAlignment="Left" Margin="602,20,0,0" Grid.Row="1" VerticalAlignment="Top" Height="29" Width="170" Click="QuitApplication"/>
 
                 <Label Content="Övriga inställningar" HorizontalAlignment="Left" Margin="35,10,0,0" Grid.Row="2" VerticalAlignment="Top" FontSize="18" FontWeight="Bold"/>
                 <Label Content="Antal bord" HorizontalAlignment="Left" Margin="282,49,0,0" Grid.Row="2" VerticalAlignment="Top"/>
