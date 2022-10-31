@@ -34,12 +34,12 @@
                 <TextBox Name="TextBox_CustomerName"  HorizontalAlignment="Left" Margin="225,35,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="175" Height="22" FontSize="14" Foreground="Black"/>
                 <TextBox Name="TextBox_CustomerAllergies"  HorizontalAlignment="Left" Margin="225,78,0,0" Grid.Row="1" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="175" Height="22" FontSize="14" Foreground="Black"/>
 
-                <Button Name="ButtonBookTable" Content="Boka" HorizontalAlignment="Left" Margin="225,198,0,0" Grid.Row="1" VerticalAlignment="Top" Height="22" Width="175" Click="Button_BookTable"/>
+                <Button Name="ButtonBookTable" Content="Boka" HorizontalAlignment="Left" Margin="225,198,0,0" Grid.Row="1" VerticalAlignment="Top" Height="22" Width="175" Click="BookTable"/>
                 <Button Name="ButtonSaveBookList" Content="Spara som..." HorizontalAlignment="Left" Margin="602,20,0,0" Grid.Row="1" VerticalAlignment="Top" Height="27" Width="170" Click="SaveBookingList"/>
                 <Button Content="Avboka" HorizontalAlignment="Left" Margin="685,200,0,0" Grid.Row="1" VerticalAlignment="Top" Width="87" Click="CancelBooking"/>
                 <Button x:Name="ButtonQuit" Content="Avsluta" HorizontalAlignment="Left" Margin="602,119,0,0" Grid.Row="1" VerticalAlignment="Top" Height="30" Width="170" Click="QuitApplication"/>
                 <Button x:Name="ButtonReadFile" Content="Ladda in..." HorizontalAlignment="Left" Margin="602,53,0,0" Grid.Row="1" VerticalAlignment="Top" Height="27" Width="170" Click="ReadBookingList"/>
-                <Button x:Name="ButtonClearList" Content="Rensa kundbokningar" HorizontalAlignment="Left" Margin="602,85,0,0" Grid.Row="1" VerticalAlignment="Top" Height="29" Width="170" Click="Settings_ClearList"/>
+                <Button x:Name="ButtonClearList" Content="Rensa kundbokningar" HorizontalAlignment="Left" Margin="602,85,0,0" Grid.Row="1" VerticalAlignment="Top" Height="29" Width="170" Click="ClearList"/>
 
                 <ComboBox Name="ComboBox_BookTable" HorizontalAlignment="Left" Margin="225,122,0,0" Grid.Row="1" VerticalAlignment="Top" Width="175"/>
                 <ComboBox Name="ComboBox_BookTime" HorizontalAlignment="Left" Margin="22,198,0,0" Grid.Row="1" VerticalAlignment="Top" Width="177"/>

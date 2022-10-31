@@ -86,7 +86,7 @@ namespace Labb_3___WPF_Booking_System
         {
             System.Windows.MessageBox.Show(message, "Fel", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }       
-        private void Button_BookTable(object sender, RoutedEventArgs e)
+        private void BookTable(object sender, RoutedEventArgs e)
         {           
             customerName = TextBox_CustomerName.Text.Trim();
             customerAllergies = TextBox_CustomerAllergies.Text.Trim();            
@@ -104,7 +104,7 @@ namespace Labb_3___WPF_Booking_System
             catch (Exception ex)
             {
                 ErrorMessage(ex.Message);
-                _ = WriteToBugFile("Button_BookTable Method: " + ex.Message);
+                _ = WriteToBugFile("BookTable Method: " + ex.Message);
             }
         }
         private string ConvertCustomerDate()
@@ -180,7 +180,7 @@ namespace Labb_3___WPF_Booking_System
         }               
         private void CancelBooking(object sender, RoutedEventArgs e)
         {
-            if (bookings.Count > 0)
+            if (bookings.Count > 0) // fullrow
             {
                 bookings.RemoveAt(Grid_CustomerBookings.SelectedIndex);
                 Grid_CustomerBookings.SelectedCells.Clear();
@@ -284,8 +284,8 @@ namespace Labb_3___WPF_Booking_System
                                     t[5] = "";
                                 }
 
-                                string i = " ";
-                                bookings.Add(new Customer(t[2] + i + t[3].Trim(), t[5].Trim(), t[0], t[1], int.Parse(t[4])));
+                                string z = " ";
+                                bookings.Add(new Customer(t[2] + z + t[3].Trim(), t[5].Trim(), t[0], t[1], int.Parse(t[4])));
                             }
                         }
                     }
@@ -297,7 +297,7 @@ namespace Labb_3___WPF_Booking_System
                 _ = WriteToBugFile("ReadBookingList Method: " + ex.Message);
             }
         }
-        private void ResetDefaultValues()
+        private void ResetDefaultValues() // Sets ComboBoxes to show their first index, clears TextBoxes
         {
             ComboBox_BookTime.SelectedIndex = 0;
             ComboBox_BookTable.SelectedIndex = 0;
@@ -305,7 +305,7 @@ namespace Labb_3___WPF_Booking_System
             TextBox_CustomerAllergies.Clear();
 
         }
-        private void Settings_ClearList(object sender, RoutedEventArgs e)
+        private void ClearList(object sender, RoutedEventArgs e)
         {
             if (bookings.Count > 0)
             {
