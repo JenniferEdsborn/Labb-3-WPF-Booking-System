@@ -180,7 +180,7 @@ namespace Labb_3___WPF_Booking_System
         }               
         private void CancelBooking(object sender, RoutedEventArgs e)
         {
-            if (Grid_CustomerBookings.SelectedCells != null)
+            if (bookings.Count > 0)
             {
                 bookings.RemoveAt(Grid_CustomerBookings.SelectedIndex);
                 Grid_CustomerBookings.SelectedCells.Clear();
@@ -285,7 +285,7 @@ namespace Labb_3___WPF_Booking_System
                                 }
 
                                 string i = " ";
-                                bookings.Add(new Customer(t[2] + i + t[3].Trim(), t[5].Trim(), t[0], t[1],int.Parse(t[4])));
+                                bookings.Add(new Customer(t[2] + i + t[3].Trim(), t[5].Trim(), t[0], t[1], int.Parse(t[4])));
                             }
                         }
                     }
@@ -303,6 +303,7 @@ namespace Labb_3___WPF_Booking_System
             ComboBox_BookTable.SelectedIndex = 0;
             TextBox_CustomerName.Clear();
             TextBox_CustomerAllergies.Clear();
+
         }
         private void Settings_ClearList(object sender, RoutedEventArgs e)
         {

@@ -66,6 +66,9 @@ namespace Labb_3___WPF_Booking_System
                     newTableAmount.Add(i);
                 }
 
+                ComboBox_BookTable.ItemsSource = newTableAmount;
+                ComboBox_BookTime.ItemsSource = newTimes;
+
                 ResetDefaultValues();
             }
             else
