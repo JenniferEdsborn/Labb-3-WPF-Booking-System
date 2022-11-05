@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,18 +18,17 @@ using System.IO;
 using System.Collections.ObjectModel;
 using Microsoft.Win32;
 using System.Windows.Forms;
-using System.Runtime.CompilerServices;
 
 /*
 * ------ PARTIAL CLASS FÖR TIDSBOKNING ------
 * Innehåll:
+* - Lista med kunder, tre kunder som default
 * - Listor för tider och bordsantal
 * - Iterering
 * - Selektion
 * - Felhantering
 * - Filhantering
-* - LINQ (kodrad 197)
-* - Asynkron metod (kodrad 81)
+* - Asynkrona metoder
 * - Felmeddelande vid dubbelbokningar
 * - Endast ett visst antal bord per datum tillåts bokas
 * ---------------------------------------------
@@ -180,25 +180,23 @@ namespace Labb_3___WPF_Booking_System
         }               
         private void CancelBooking(object sender, RoutedEventArgs e)
         {
-            if (bookings.Count > 0) // fullrow
+            if (bookings.Count > 0)
             {
+                int previousSelection = Grid_CustomerBookings.SelectedIndex;
                 bookings.RemoveAt(Grid_CustomerBookings.SelectedIndex);
                 Grid_CustomerBookings.SelectedCells.Clear();
+                Grid_CustomerBookings.SelectedIndex = previousSelection-1; // Så man kan klicka avboka om och om igen från valt index
             }
-            else
-                return;
         }
-        private void SaveBookingList(object sender, RoutedEventArgs e)
+        private async void SaveBookingList(object sender, RoutedEventArgs e)
         {
             if (bookings.Count > 0)
             {
                 try
                 {
-                    List<Customer> printList = new List<Customer>(bookings.OrderBy(o => o.customerDate).ToList()); //LINQ
-
                     System.Windows.Forms.SaveFileDialog dlg = new System.Windows.Forms.SaveFileDialog();
 
-                    dlg.Filter = "txt Files|*.txt";
+                    dlg.Filter = "Json files(*.json)|*.json";
                     dlg.FilterIndex = 1;
                     dlg.RestoreDirectory = true;
 
@@ -206,103 +204,111 @@ namespace Labb_3___WPF_Booking_System
                     {
                         using (FileStream fs = (FileStream)dlg.OpenFile())
                         {
-                            using (StreamWriter sw = new StreamWriter(fs, Encoding.Default))
-                            {
-                                foreach (Customer customer in printList)
-                                {
-                                    customer.customerName.Trim();
-                                }
-
-                                for (int i = 0; i < printList.Count; i++)
-                                {
-                                    if (printList[i].customerName.Contains(' ') == false)
-                                    {
-                                        printList[i].customerName = printList[i].customerName + " NoLastName";
-                                    }
-
-                                    if (printList[i].customerAllergies == "")
-                                    {
-                                        printList[i].customerAllergies = "-";
-                                    }
-                                }
-
-                                foreach (Customer obj in printList)
-                                {
-                                    sw.WriteLine($"{obj.customerDate} {obj.customerTime} {obj.customerName} {obj.customerTable} {obj.customerAllergies}");
-                                }
-                            }
+                            await JsonSerializer.SerializeAsync(fs, bookings);
+                            await fs.DisposeAsync();
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (ArgumentNullException ex)
+                {
+                    ErrorMessage("Någonting gick fel. Försök igen.");
+                    _ = WriteToBugFile("SaveBookingList Method: " + ex.Message);
+                }
+                catch (NotSupportedException ex)
                 {
                     ErrorMessage("Någonting gick fel. Försök igen.");
                     _ = WriteToBugFile("SaveBookingList Method: " + ex.Message);
                 }
             }
             else
+            {
                 ErrorMessage("Du har inga registrerade bokningar.");
+            }
         }
-        private void ReadBookingList(object sender, RoutedEventArgs e)
+        private async void ReadBookingList(object sender, RoutedEventArgs e)
         {
-            string[] tempbookings;
-            List<string> templist = new List<string>();
+            List<Customer>? temp = new List<Customer>();
+            bool doubleBooking = false;
 
             try
             {
                 System.Windows.Forms.OpenFileDialog dlg = new System.Windows.Forms.OpenFileDialog();
-                dlg.DefaultExt = ".txt";
-                dlg.Filter = "txt documents (.txt)|*.txt";
+                dlg.DefaultExt = ".json";
+                dlg.Filter = "Json files(*.json)|*.json";
 
                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     using (FileStream fs = (FileStream)dlg.OpenFile())
                     {
-                        using (StreamReader sr = new StreamReader(fs, Encoding.Default))
+                        temp = await JsonSerializer.DeserializeAsync<List<Customer>>(fs);
+                    }
+                }
+
+                // Kollar ifall det blir dubbelbokningar med den nya listan
+                if (temp.Count > 0)
+                {
+                    foreach (Customer customer in temp)
+                    {
+                        for (int i = 0; i < bookings.Count; i++)
                         {
-                            tempbookings = sr.ReadToEnd().Split("\r\n");
-
-                            foreach (string booking in tempbookings) // Adds all strings into a temporary list
+                            if (bookings.Count > 0)
                             {
-                                templist.Add(booking);
-                            }
-
-                            templist.RemoveAt(templist.Count-1); // Removes the last item which is always null (new-line)
-
-                            foreach (string booking in templist) // Works through every fifth item and adds them into the booking-list
-                            {                                
-                                string[] t = booking.Split(' ');
-
-                                if (t[3] == "NoLastName")
+                                if (customer.customerTable == bookings[i].customerTable && customer.customerDate == bookings[i].customerDate
+                                && customer.customerTime == bookings[i].customerTime)
                                 {
-                                    t[3] = "";
+                                    doubleBooking = true;
                                 }
-
-                                if (t[5] == "-")
-                                {
-                                    t[5] = "";
-                                }
-
-                                string z = " ";
-                                bookings.Add(new Customer(t[2] + z + t[3].Trim(), t[5].Trim(), t[0], t[1], int.Parse(t[4])));
                             }
+                        }
+                    }
+
+                    // Ger användaren möjlighet att välja att inte läsa in listan om dubbelbokningar kommer att finnas
+                    if (doubleBooking == true)
+                    {
+                        if (System.Windows.MessageBox.Show("Dubbelbokningar har registrerats. Fortsätta?", "Varning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                        {
+                            foreach (Customer customer in temp)
+                            {
+                                bookings.Add(customer);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (Customer customer in temp)
+                        {
+                            bookings.Add(customer);
                         }
                     }
                 }
             }
-            catch (Exception ex)
+            catch (JsonException ex)
             {
                 ErrorMessage("Någonting gick fel vid inläsning.");
                 _ = WriteToBugFile("ReadBookingList Method: " + ex.Message);
             }
+            catch(NotSupportedException ex)
+            {
+                ErrorMessage("Någonting gick fel vid inläsning.");
+                _ = WriteToBugFile("ReadBookingList Method: " + ex.Message);
+            }
+            catch(ArgumentNullException ex)
+            {
+                ErrorMessage("Någonting gick fel vid inläsning.");
+                _ = WriteToBugFile("ReadBookingList Method: " + ex.Message);
+            }
+            catch(Exception ex)
+            {
+                ErrorMessage("Någonting gick fel vid inläsning.");
+                _ = WriteToBugFile("ReadBookingList Method: " + ex.Message);
+            }            
         }
-        private void ResetDefaultValues() // Sets ComboBoxes to show their first index, clears TextBoxes
+        private void ResetDefaultValues()
         {
             ComboBox_BookTime.SelectedIndex = 0;
             ComboBox_BookTable.SelectedIndex = 0;
             TextBox_CustomerName.Clear();
             TextBox_CustomerAllergies.Clear();
-
         }
         private void ClearList(object sender, RoutedEventArgs e)
         {

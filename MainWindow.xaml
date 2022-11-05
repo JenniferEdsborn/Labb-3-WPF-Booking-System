@@ -44,7 +44,7 @@
                 <ComboBox Name="ComboBox_BookTable" HorizontalAlignment="Left" Margin="225,122,0,0" Grid.Row="1" VerticalAlignment="Top" Width="175"/>
                 <ComboBox Name="ComboBox_BookTime" HorizontalAlignment="Left" Margin="22,198,0,0" Grid.Row="1" VerticalAlignment="Top" Width="177"/>
 
-                <DataGrid Name="Grid_CustomerBookings" Grid.Row="2" AutoGenerateColumns="False">
+                <DataGrid Name="Grid_CustomerBookings" Grid.Row="2" AutoGenerateColumns="False" SelectionMode="Single">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Datum" Width="70"  Binding="{Binding customerDate}"/>
                         <DataGridTextColumn Header="Tid" Width="50" Binding="{Binding customerTime}" />
@@ -92,6 +92,7 @@
                 <ComboBox Name="ComboBox_TableAmount" HorizontalAlignment="Left" Margin="282,75,0,0" Grid.Row="2" VerticalAlignment="Top" Width="159"/>
                 <ComboBox Name="ComboBox_CloseTime" HorizontalAlignment="Left" Margin="35,133,0,0" Grid.Row="2" VerticalAlignment="Top" Width="160"/>
                 <Button Name="ButtonSaveSettings" Content="Spara ändringar" HorizontalAlignment="Left" Margin="35,177,0,0" Grid.Row="2" VerticalAlignment="Top" Height="27" Width="281" Click="SaveSettings"/>
+                <Button x:Name="ButtonRestore" Content="Återställ" HorizontalAlignment="Left" Margin="602,54,0,0" Grid.Row="1" VerticalAlignment="Top" Height="29" Width="170" Click="RestoreAllSettings"/>
 
 
             </Grid>

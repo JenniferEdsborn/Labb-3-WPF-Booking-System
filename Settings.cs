@@ -78,6 +78,47 @@ namespace Labb_3___WPF_Booking_System
         }
         private void SaveNameThemeSettings(object sender, RoutedEventArgs e)
         {
+            HandleRestaurantTheme();
+
+            if (TextBox_SetRestaurantName.Text == "")
+            {
+                LabelRestaurantName.Content = "Restaurant Booking System";
+            }
+            else
+            {
+                LabelRestaurantName.Content = TextBox_SetRestaurantName.Text;               
+            }
+
+            System.Windows.MessageBox.Show("Dina ändringar är genomförda.", "Information", MessageBoxButton.OK);
+        }
+        private void RestoreAllSettings(object sender, RoutedEventArgs e)
+        {
+            if (System.Windows.MessageBox.Show("Alla inställningar och bokningar kommer att återställas.\n" +
+                "Fortsätta?", "Varning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            {
+                TextBox_SetRestaurantName.Text = "Restaurant Booking System";
+                LabelRestaurantName.Content = "Restaurant Booking System";
+                GreyTheme.IsChecked = true;
+
+                this.ComboBox_OpenTime.SelectedIndex = 0;
+                this.ComboBox_CloseTime.SelectedIndex = 0;
+                this.ComboBox_TableAmount.SelectedIndex = 0;
+
+                bookings.Clear();
+                bookings.Add(new Customer("Ove Sundberg", "Fisk", new DateTime(2022, 12, 10).ToShortDateString(), "13.00", 2));
+                bookings.Add(new Customer("Frodo Baggins", "Gluten", new DateTime(2022, 12, 10).ToShortDateString(), "14.00", 2));
+                bookings.Add(new Customer("Rhaenyra Targaryen", "", new DateTime(2022, 12, 11).ToShortDateString(), "15.00", 4));
+
+                this.ComboBox_BookTime.ItemsSource = defaultTimes;
+                this.ComboBox_BookTable.ItemsSource = defaultTableAmount;
+                ResetDefaultValues();
+                HandleRestaurantTheme();
+            }
+            else
+                return;
+        }
+        private void HandleRestaurantTheme()
+        {
             SettingsHeadBorder_Gray.Visibility = Visibility.Hidden;
             SettingsHeadBorder_Blue.Visibility = Visibility.Hidden;
             SettingsHeadBorder_Pink.Visibility = Visibility.Hidden;
@@ -108,17 +149,6 @@ namespace Labb_3___WPF_Booking_System
                 SettingsFootBorder_Gray.Visibility = Visibility.Visible;
                 HeadBorder_Gray.Visibility = Visibility.Visible;
             }
-
-            if (TextBox_SetRestaurantName.Text == "")
-            {
-                LabelRestaurantName.Content = "Restaurant Booking System";
-            }
-            else
-            {
-                LabelRestaurantName.Content = TextBox_SetRestaurantName.Text;               
-            }
-
-            System.Windows.MessageBox.Show("Dina ändringar är genomförda.", "Information", MessageBoxButton.OK);
-        }       
+        }
     }
 }
